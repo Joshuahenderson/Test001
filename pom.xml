@@ -1,0 +1,110 @@
+package stepDefinitions;
+
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import org.junit.Assert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
+public class Stepdefinition1 {
+
+    private WebDriver driver;
+    private String URL = "https://accounts.google.com/ServiceLogin?passive=1209600&continue=https://datastudio.google.com/?hl%3Den%23&followup=https://datastudio.google.com/?hl%3Den&hl=en";
+    private String assertuserURL = "https://accounts.google.com/ServiceLogin?passive=1209600&continue=https://datastudio.google.com/?hl%3Den%23&followup=https://datastudio.google.com/?hl%3Den&hl=en#identifier";
+    private String assertpassURL = "https://accounts.google.com/ServiceLogin?passive=1209600&continue=https://datastudio.google.com/?hl%3Den%23&followup=https://datastudio.google.com/?hl%3Den&hl=en#password";
+    private String landingURL = "https://datastudio.google.com/?hl=en#/org/5byXncIrTjeYqHqazVGn_w/navigation/reporting";
+    private String reportURL = "https://datastudio.google.com/?hl=en#/org/5byXncIrTjeYqHqazVGn_w/reporting/0B5wHmuUddaGNTTB5dE5TVXh0aW8/page/tma";
+
+    @Given("^I navigate to Datastudio url on \"([^\"]*)\"$")
+    public void i_navigate_to_Datastudio_url_on(String browser) throws Throwable {
+        if (browser.equalsIgnoreCase("FF")) {
+
+            driver = new FirefoxDriver();
+
+        } else if (browser.equalsIgnoreCase("IE")) {
+
+            System.setProperty("webdriver.ie.driver", System.getProperty("user.dir") + "//Drivers//IEDriverServer.exe");
+
+            driver = new InternetExplorerDriver();
+
+        } else if (browser.equalsIgnoreCase("GC")) {
+
+            System.setProperty("webdriver.chrome.driver",
+
+                    System.getProperty("user.dir") + "//Drivers//chromedriver.exe");
+
+            driver = new ChromeDriver();
+        }
+
+        driver.get(URL);
+
+        driver.manage().window().maximize();
+
+        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+
+        Thread.sleep(1000);
+
+        String URL1 = driver.getCurrentUrl();
+        Assert.assertEquals(URL1, assertuserURL);
+    }
+
+    @Then("^I input user id in the text box$")
+    public void i_input_user_id_in_the_text_box() throws Throwable {
+        driver.findElement(By.id("Email")).sendKeys("xyz@periscopix.com");
+        Thread.sleep(1000);
+
+        driver.findElement(By.id("next")).click();
+        Thread.sleep(3000);
+
+    }
+
+    @Then("^I navigate to the provide password page$")
+    public void i_navigate_to_the_provide_password_page() throws Throwable {
+
+        String URL1 = driver.getCurrentUrl();
+        Assert.assertEquals(URL1, assertpassURL);
+    }
+
+    @Then("^I provide the password$")
+    public void i_provide_the_password() throws Throwable {
+        driver.findElement(By.id("Passwd")).sendKeys("This_is_not_my_password");
+
+        driver.findElement(By.id("signIn")).click();
+        Thread.sleep(5000);
+
+        String URL1 = driver.getCurrentUrl();
+        Assert.assertEquals(URL1, landingURL);
+
+
+    }
+
+    @Then("^I click on Testing report for selenium hyperlink$")
+    public void i_click_on_Testing_report_for_selenium_hyperlink() throws Throwable {
+
+        driver.findElement(By.partialLinkText("DM Real")).click();
+        Thread.sleep(2000);
+    }
+
+    @Then("^I navigate to report page$")
+    public void i_navigate_to_report_page() throws Throwable {
+
+        String URL1 = driver.getCurrentUrl();
+        Assert.assertEquals(URL1, reportURL);
+
+    }
+
+    @Then("^I click on refresh button$")
+    public void i_click_on_refresh_button() throws Throwable {
+        Date dt= new Date();
+        driver.findElement(By.cssSelector("div.icon-restore.tool-icon")).click();
+        Thread.sleep(3000);
+        driver.close();
+    }
+
+} 
